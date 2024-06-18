@@ -548,7 +548,6 @@ dependencies = [
  "dioxus-signals",
  "dioxus-ssr",
  "dioxus-web",
- "serde",
 ]
 
 [[package]]
@@ -2104,8 +2103,10 @@ version = "0.1.0"
 dependencies = [
  "dioxus",
  "dioxus-logger",
+ "dioxus-web",
  "serde",
  "tracing",
+ "web-sys",
 ]
 
 [[package]]

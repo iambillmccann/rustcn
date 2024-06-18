@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
+// use dioxus_web::launch;
 mod app;
 
 fn main() {
-    dioxus::web::launch(app::App);
+    launch(app::App);
 }
