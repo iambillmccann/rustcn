@@ -8,8 +8,9 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0.197", features = ["derive"] }
+manganis = "0.2.2"
 
-dioxus = { version = "0.5.0", features = ["web", "router"] }
+dioxus = { version = "0.5", features = ["web", "router"] }
 dioxus-web = "0.5"
 web-sys = "0.3.55"
 

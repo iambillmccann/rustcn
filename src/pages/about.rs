@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn About() -> Element {
-    render! {
+    rsx! {
         div {
             class: "p-4",
             "About Page"

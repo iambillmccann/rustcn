@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum ButtonVariant {
     Default,
     Destructive,
@@ -29,7 +29,7 @@ impl ButtonVariant {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum ButtonSize {
     Default,
     Sm,
@@ -48,31 +48,33 @@ impl ButtonSize {
     }
 }
 
-#[derive(Props)]
-pub struct ButtonProps<'a> {
-    text: &'a str,
+#[derive(Clone, PartialEq, Props)]
+pub struct ButtonProps {
+    text: &'static str,
     #[props(optional)]
     variant: Option<ButtonVariant>,
     #[props(optional)]
     size: Option<ButtonSize>,
     #[props(optional)]
-    class: Option<&'a str>,
+    class: Option<&'static str>,
     #[props(optional)]
-    on_click: Option<EventHandler<'a, MouseEvent>>,
+    on_click: Option<EventHandler<MouseEvent>>,
 }
 
 #[component]
-pub fn Button<'a>(props: ButtonProps<'a>) -> Element {
-    let variant_class = props.variant.unwrap_or(ButtonVariant::Default).to_class();
-    let size_class = props.size.unwrap_or(ButtonSize::Default).to_class();
+pub fn Button(props: ButtonProps) -> Element {
+    let variant = props.variant.unwrap_or(ButtonVariant::Default);
+    let variant_class = variant.to_class();
+    let size = props.size.unwrap_or(ButtonSize::Default);
+    let size_class = size.to_class();
     let additional_class = props.class.unwrap_or("");
 
-    render! {
+    rsx! {
         button {
             class: format_args!("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 {} {} {}", variant_class, size_class, additional_class),
-            onclick: move |_| {
+            onclick: move |event| {
                 if let Some(on_click) = &props.on_click {
-                    on_click.call(());
+                    on_click.call(event);
                 }
             },
             "{props.text}"

@@ -1,12 +1,11 @@
-use crate::components::Button;
+use crate::components::{Button, ButtonSize, ButtonVariant};
 use dioxus::prelude::*;
 
-#[component]
-pub fn Home() -> Element {
-    render! {
+pub fn HomePage() -> Element {
+    rsx! {
         div {
-            class: "p-4",
-            "Home Page",
+            class: "flex items-center justify-center h-screen bg-black text-white text-4xl",
+            "Hello World"
             Button {
                 text: "Click Me",
                 variant: Some(ButtonVariant::Default),
