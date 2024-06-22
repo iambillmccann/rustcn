@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn HomePage() -> Element {
-    let show_alert = use_signal(|| false);
+    let mut show_alert = use_signal(|| false);
 
     rsx! {
         div {
@@ -21,7 +21,7 @@ pub fn HomePage() -> Element {
                 }
             },
             {
-                if *show_alert.get() {
+                if *show_alert.read() {
                     rsx! {
                         Alert {
                             variant: Some(AlertVariant::Default),
