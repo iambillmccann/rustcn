@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum AlertVariant {
     Default,
     Destructive,
@@ -15,7 +15,7 @@ impl AlertVariant {
     }
 }
 
-#[derive(Props)]
+#[derive(Props, PartialEq, Clone)]
 pub struct AlertProps {
     #[props(optional)]
     variant: Option<AlertVariant>,
@@ -26,8 +26,11 @@ pub struct AlertProps {
 
 #[component]
 pub fn Alert(props: AlertProps) -> Element {
-    let variant_class = props.variant.unwrap_or(AlertVariant::Default).to_class();
-    let additional_class = props.class.unwrap_or("");
+    let variant_class = {
+        let variant = props.variant.unwrap_or(AlertVariant::Default);
+        variant.to_class().to_string()
+    };
+    let additional_class = props.class.unwrap_or("").to_string();
 
     rsx! {
         div {
@@ -38,7 +41,7 @@ pub fn Alert(props: AlertProps) -> Element {
     }
 }
 
-#[derive(Props)]
+#[derive(Props, PartialEq, Clone)]
 pub struct AlertTitleProps {
     #[props(optional)]
     class: Option<&'static str>,
@@ -47,7 +50,7 @@ pub struct AlertTitleProps {
 
 #[component]
 pub fn AlertTitle(props: AlertTitleProps) -> Element {
-    let additional_class = props.class.unwrap_or("");
+    let additional_class = props.class.unwrap_or("").to_string();
 
     rsx! {
         h5 {
@@ -57,7 +60,7 @@ pub fn AlertTitle(props: AlertTitleProps) -> Element {
     }
 }
 
-#[derive(Props)]
+#[derive(Props, PartialEq, Clone)]
 pub struct AlertDescriptionProps {
     #[props(optional)]
     class: Option<&'static str>,
@@ -66,7 +69,7 @@ pub struct AlertDescriptionProps {
 
 #[component]
 pub fn AlertDescription(props: AlertDescriptionProps) -> Element {
-    let additional_class = props.class.unwrap_or("");
+    let additional_class = props.class.unwrap_or("").to_string();
 
     rsx! {
         div {
