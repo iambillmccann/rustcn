@@ -1,9 +1,9 @@
 use dioxus::events::MouseEvent;
 use dioxus::prelude::*;
 
-#[derive(Props)]
-pub struct AlertDialogProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogProps {
+    children: Element,
 }
 
 #[component]
@@ -16,11 +16,11 @@ pub fn AlertDialog(props: AlertDialogProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogTriggerProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogTriggerProps {
+    children: Element,
     #[props(optional)]
-    on_click: Option<EventHandler<'a, MouseEvent>>,
+    on_click: Option<EventHandler<MouseEvent>>,
 }
 
 #[component]
@@ -38,9 +38,9 @@ pub fn AlertDialogTrigger(props: AlertDialogTriggerProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogOverlayProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogOverlayProps {
+    children: Element,
 }
 
 #[component]
@@ -53,9 +53,9 @@ pub fn AlertDialogOverlay(props: AlertDialogOverlayProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogContentProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogContentProps {
+    children: Element,
 }
 
 #[component]
@@ -68,9 +68,9 @@ pub fn AlertDialogContent(props: AlertDialogContentProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogHeaderProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogHeaderProps {
+    children: Element,
 }
 
 #[component]
@@ -83,9 +83,9 @@ pub fn AlertDialogHeader(props: AlertDialogHeaderProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogFooterProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogFooterProps {
+    children: Element,
 }
 
 #[component]
@@ -98,9 +98,9 @@ pub fn AlertDialogFooter(props: AlertDialogFooterProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogTitleProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogTitleProps {
+    children: Element,
 }
 
 #[component]
@@ -113,9 +113,9 @@ pub fn AlertDialogTitle(props: AlertDialogTitleProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogDescriptionProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogDescriptionProps {
+    children: Element,
 }
 
 #[component]
@@ -128,11 +128,11 @@ pub fn AlertDialogDescription(props: AlertDialogDescriptionProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogActionProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogActionProps {
+    children: Element,
     #[props(optional)]
-    on_click: Option<EventHandler<'a, MouseEvent>>,
+    on_click: Option<EventHandler<MouseEvent>>,
 }
 
 #[component]
@@ -150,11 +150,11 @@ pub fn AlertDialogAction(props: AlertDialogActionProps) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AlertDialogCancelProps<'a> {
-    children: Element<'a>,
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogCancelProps {
+    children: Element,
     #[props(optional)]
-    on_click: Option<EventHandler<'a, MouseEvent>>,
+    on_click: Option<EventHandler<MouseEvent>>,
 }
 
 #[component]

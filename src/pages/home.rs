@@ -21,27 +21,31 @@ pub fn HomePage() -> Element {
                     println!("Button clicked!");
                 }
             },
-            if *show_alert.read() {
-                rsx! {
-                    AlertDialog {
-                        AlertDialogTrigger { "Open Dialog" },
-                        AlertDialogOverlay {
-                            AlertDialogContent {
-                                AlertDialogHeader { AlertDialogTitle { "Alert" } }
-                                AlertDialogDescription { "You clicked on me." }
-                                AlertDialogFooter {
-                                    AlertDialogAction {
-                                        on_click: move |_| show_alert.set(false),
-                                        "Confirm"
-                                    }
-                                    AlertDialogCancel {
-                                        on_click: move |_| show_alert.set(false),
-                                        "Cancel"
+            {
+                if *show_alert.read() {
+                    rsx! {
+                        AlertDialog {
+                            AlertDialogTrigger { "Open Dialog" }
+                            AlertDialogOverlay {
+                                AlertDialogContent {
+                                    AlertDialogHeader { AlertDialogTitle { "Alert" } }
+                                    AlertDialogDescription { "You clicked on me." }
+                                    AlertDialogFooter {
+                                        AlertDialogAction {
+                                            on_click: move |_| show_alert.set(false),
+                                            "Confirm"
+                                        }
+                                        AlertDialogCancel {
+                                            on_click: move |_| show_alert.set(false),
+                                            "Cancel"
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                } else {
+                    rsx! { "" }
                 }
             }
         }
