@@ -1,9 +1,10 @@
 use crate::components::{
-    Alert, AlertDescription, AlertTitle, AlertVariant, Button, ButtonSize, ButtonVariant,
+    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+    AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogTitle, AlertDialogTrigger,
+    Button, ButtonSize, ButtonVariant,
 };
 use dioxus::prelude::*;
 
-#[component]
 pub fn HomePage() -> Element {
     let mut show_alert = use_signal(|| false);
 
@@ -20,17 +21,27 @@ pub fn HomePage() -> Element {
                     println!("Button clicked!");
                 }
             },
-            {
-                if *show_alert.read() {
-                    rsx! {
-                        Alert {
-                            variant: Some(AlertVariant::Default),
-                            AlertTitle { "Alert" }
-                            AlertDescription { "You clicked on me." }
+            if *show_alert.read() {
+                rsx! {
+                    AlertDialog {
+                        AlertDialogTrigger { "Open Dialog" },
+                        AlertDialogOverlay {
+                            AlertDialogContent {
+                                AlertDialogHeader { AlertDialogTitle { "Alert" } }
+                                AlertDialogDescription { "You clicked on me." }
+                                AlertDialogFooter {
+                                    AlertDialogAction {
+                                        on_click: move |_| show_alert.set(false),
+                                        "Confirm"
+                                    }
+                                    AlertDialogCancel {
+                                        on_click: move |_| show_alert.set(false),
+                                        "Cancel"
+                                    }
+                                }
+                            }
                         }
                     }
-                } else {
-                    rsx! { "" }
                 }
             }
         }
