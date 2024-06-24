@@ -62,7 +62,7 @@ pub struct AlertDialogContentProps {
 pub fn AlertDialogContent(props: AlertDialogContentProps) -> Element {
     rsx! {
         div {
-            class: "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg",
+            class: "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg",
             {props.children}
         }
     }
@@ -139,7 +139,7 @@ pub struct AlertDialogActionProps {
 pub fn AlertDialogAction(props: AlertDialogActionProps) -> Element {
     rsx! {
         button {
-            class: "alert-dialog-action",
+            class: "alert-dialog-action bg-blue-500 text-white px-4 py-2 rounded",
             onclick: move |e| {
                 if let Some(on_click) = &props.on_click {
                     on_click.call(e);
@@ -161,7 +161,7 @@ pub struct AlertDialogCancelProps {
 pub fn AlertDialogCancel(props: AlertDialogCancelProps) -> Element {
     rsx! {
         button {
-            class: "alert-dialog-cancel mt-2 sm:mt-0",
+            class: "alert-dialog-cancel bg-gray-300 text-black px-4 py-2 rounded mt-2 sm:mt-0",
             onclick: move |e| {
                 if let Some(on_click) = &props.on_click {
                     on_click.call(e);

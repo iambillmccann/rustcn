@@ -19,7 +19,8 @@ pub fn HomePage() -> Element {
                 on_click: move |_| {
                     show_alert.set(true);
                     println!("Button clicked!");
-                }
+                },
+                class: "border border-white"
             },
             {
                 if *show_alert.read() {
