@@ -12,3 +12,7 @@ Launch the Dioxus Fullstack app:
 ```bash
 dx serve --platform fullstack
 ```
+
+### To Do
+
+Discover and resolve styling issues with the button. The code specifies a white border, but none is showing.
