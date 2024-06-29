@@ -16,3 +16,5 @@ dx serve --platform fullstack
 ### To Do
 
 Discover and resolve styling issues with the button. The code specifies a white border, but none is showing.
+
+Strange, but the above issue appears resolved without code changes.
