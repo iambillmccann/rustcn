@@ -20,3 +20,5 @@ Discover and resolve styling issues with the button. The code specifies a white 
 Strange, but the above issue appears resolved without code changes.
 
 I need to figure out the next few controls, and then decide how to incorporate Rustcn into projects.
+
+Textbox will be the next one.
