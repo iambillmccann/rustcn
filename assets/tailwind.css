@@ -618,6 +618,10 @@ video {
   height: 100vh;
 }
 
+.min-h-\[80px\] {
+  min-height: 80px;
+}
+
 .w-10 {
   width: 2.5rem;
 }
@@ -829,6 +833,10 @@ video {
 
 .disabled\:pointer-events-none:disabled {
   pointer-events: none;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed;
 }
 
 .disabled\:opacity-50:disabled {

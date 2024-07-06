@@ -1,6 +1,7 @@
 mod alert;
 mod alert_dialog;
 mod button;
+mod textarea;
 
 pub use alert::{Alert, AlertDescription, AlertTitle, AlertVariant};
 pub use alert_dialog::{
@@ -8,3 +9,4 @@ pub use alert_dialog::{
     AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogTitle, AlertDialogTrigger,
 };
 pub use button::{Button, ButtonSize, ButtonVariant};
+pub use textarea::Textarea;
