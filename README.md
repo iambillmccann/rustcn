@@ -21,4 +21,4 @@ Strange, but the above issue appears resolved without code changes.
 
 I need to figure out the next few controls, and then decide how to incorporate Rustcn into projects.
 
-Textbox will be the next one.
+Textarea is done, but there are look and feel issues on the home page.
