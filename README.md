@@ -15,10 +15,4 @@ dx serve --platform fullstack
 
 ### To Do
 
-Discover and resolve styling issues with the button. The code specifies a white border, but none is showing.
-
-Strange, but the above issue appears resolved without code changes.
-
-I need to figure out the next few controls, and then decide how to incorporate Rustcn into projects.
-
 Textarea is done, but there are look and feel issues on the home page.
