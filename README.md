@@ -16,3 +16,5 @@ dx serve --platform fullstack
 ### To Do
 
 Textarea is done, but there are look and feel issues on the home page.
+
+Ok, I think the `input` control should be next
