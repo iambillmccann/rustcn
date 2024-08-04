@@ -1,6 +1,7 @@
 mod alert;
 mod alert_dialog;
 mod button;
+mod input;
 mod textarea;
 
 pub use alert::{Alert, AlertDescription, AlertTitle, AlertVariant};
