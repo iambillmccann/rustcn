@@ -41,12 +41,12 @@ pub fn Input(props: InputProps) -> Element {
             value: "{value.unwrap_or_default()}",
             placeholder: "{placeholder.unwrap_or_default()}",
             disabled: "{disabled.unwrap_or(false)}",
-            r#type: "{input_type.unwrap_or_else(|| String::from("text"))}",
+            r#type: "{input_type.unwrap_or_else(|| String::from(\"text\"))}",
             oninput: move |event| {
                 if let Some(on_input) = &on_input {
                     on_input.call(event);
                 }
-            }
+            },
         }
     }
 }
