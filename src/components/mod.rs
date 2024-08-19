@@ -10,4 +10,5 @@ pub use alert_dialog::{
     AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogTitle, AlertDialogTrigger,
 };
 pub use button::{Button, ButtonSize, ButtonVariant};
+pub use input::{Input, InputProps};
 pub use textarea::Textarea;
