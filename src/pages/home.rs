@@ -25,7 +25,7 @@ pub fn HomePage() -> Element {
                 class: "border border-white"
             },
             Input {
-                class: Some(String::from("my-custom-class")),
+                class: Some(String::from("my-custom-class text-black")),
                 value: Some(input_value.read().clone()),
                 placeholder: Some(String::from("Enter title here...")),
                 on_input: move |event: FormEvent| {
@@ -33,7 +33,7 @@ pub fn HomePage() -> Element {
                 }
             },
             Textarea {
-                class: Some(String::from("my-custom-class mt-4")),
+                class: Some(String::from("my-custom-class text-black mt-4")),
                 value: Some(textarea_value.read().clone()),
                 placeholder: Some(String::from("Enter text here...")),
                 on_input: move |event: FormEvent| {
@@ -47,8 +47,20 @@ pub fn HomePage() -> Element {
                             AlertDialogTrigger { "Open Dialog" }
                             AlertDialogOverlay {
                                 AlertDialogContent {
-                                    AlertDialogHeader { AlertDialogTitle { "{input_value.read()}" } }
-                                    AlertDialogDescription { "{textarea_value.read()}" }
+                                    AlertDialogHeader {
+                                        div {
+                                            class: "text-black",
+                                            AlertDialogTitle {
+                                                "{input_value.read()}"
+                                            }
+                                        }
+                                    }
+                                    AlertDialogDescription {
+                                        div {
+                                            class: "text-black",
+                                            "{textarea_value.read()}"
+                                        }
+                                    }
                                     AlertDialogFooter {
                                         AlertDialogAction {
                                             on_click: move |_| show_alert.set(false),
