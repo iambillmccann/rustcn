@@ -9,13 +9,6 @@ pub struct FormProps {
     on_submit: Option<EventHandler<FormEvent>>,
 }
 
-#[derive(Props, PartialEq)]
-pub struct FormProps<'a> {
-    children: Element<'a>,
-    #[props(optional)]
-    on_submit: Option<EventHandler<'a, FormEvent>>,
-}
-
 #[component]
 pub fn Form(props: FormProps) -> Element {
     let form_state = use_context::<Arc<FormState>>().unwrap_or_else(|| {
