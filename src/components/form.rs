@@ -2,6 +2,12 @@ use dioxus::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 
+// Define FormState to manage form state and errors
+#[derive(Clone, PartialEq)]
+pub struct FormState {
+    pub errors: HashMap<String, String>,
+}
+
 #[derive(Clone, Props, PartialEq)]
 pub struct FormProps {
     children: Element,
