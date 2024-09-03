@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Props, PartialEq)]
+#[derive(Clone, Props, PartialEq)]
 pub struct FormProps {
     children: Element,
     #[props(optional)]
@@ -30,7 +30,7 @@ pub fn Form(props: FormProps) -> Element {
     }
 }
 
-#[derive(Props, PartialEq)]
+#[derive(Clone, Props, PartialEq)]
 pub struct FormItemProps {
     children: Element,
 }
@@ -45,7 +45,7 @@ pub fn FormItem(props: FormItemProps) -> Element {
     }
 }
 
-#[derive(Props, PartialEq)]
+#[derive(Clone, Props, PartialEq)]
 pub struct FormLabelProps {
     children: Element,
     #[props(optional)]
@@ -63,7 +63,7 @@ pub fn FormLabel(props: FormLabelProps) -> Element {
     }
 }
 
-#[derive(Props, PartialEq)]
+#[derive(Clone, Props, PartialEq)]
 pub struct FormControlProps {
     children: Element,
 }
@@ -78,7 +78,7 @@ pub fn FormControl(props: FormControlProps) -> Element {
     }
 }
 
-#[derive(Props, PartialEq)]
+#[derive(Clone, Props, PartialEq)]
 pub struct FormDescriptionProps {
     children: Element,
 }
@@ -93,7 +93,7 @@ pub fn FormDescription(props: FormDescriptionProps) -> Element {
     }
 }
 
-#[derive(Props, PartialEq)]
+#[derive(Clone, Props, PartialEq)]
 pub struct FormMessageProps {
     children: Element,
 }
