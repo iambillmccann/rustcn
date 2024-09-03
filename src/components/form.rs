@@ -2,9 +2,11 @@ use dioxus::prelude::*;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Clone, PartialEq)]
-pub struct FormState {
-    pub errors: HashMap<String, String>,
+#[derive(Props, PartialEq)]
+pub struct FormProps {
+    children: Element,
+    #[props(optional)]
+    on_submit: Option<EventHandler<FormEvent>>,
 }
 
 #[derive(Props, PartialEq)]
@@ -15,7 +17,7 @@ pub struct FormProps<'a> {
 }
 
 #[component]
-pub fn Form<'a>(props: FormProps<'a>) -> Element<'a> {
+pub fn Form(props: FormProps) -> Element {
     let form_state = use_context::<Arc<FormState>>().unwrap_or_else(|| {
         Arc::new(FormState {
             errors: HashMap::new(),
@@ -30,18 +32,18 @@ pub fn Form<'a>(props: FormProps<'a>) -> Element<'a> {
                     on_submit.call(e);
                 }
             },
-            &props.children
+            {props.children}
         }
     }
 }
 
 #[derive(Props, PartialEq)]
-pub struct FormItemProps<'a> {
-    children: Element<'a>,
+pub struct FormItemProps {
+    children: Element,
 }
 
 #[component]
-pub fn FormItem<'a>(props: FormItemProps<'a>) -> Element {
+pub fn FormItem(props: FormItemProps) -> Element {
     rsx! {
         div {
             class: "space-y-2",
@@ -51,14 +53,14 @@ pub fn FormItem<'a>(props: FormItemProps<'a>) -> Element {
 }
 
 #[derive(Props, PartialEq)]
-pub struct FormLabelProps<'a> {
-    children: Element<'a>,
+pub struct FormLabelProps {
+    children: Element,
     #[props(optional)]
     html_for: Option<String>,
 }
 
 #[component]
-pub fn FormLabel<'a>(props: FormLabelProps<'a>) -> Element {
+pub fn FormLabel(props: FormLabelProps) -> Element {
     rsx! {
         label {
             class: "text-black",
@@ -69,12 +71,12 @@ pub fn FormLabel<'a>(props: FormLabelProps<'a>) -> Element {
 }
 
 #[derive(Props, PartialEq)]
-pub struct FormControlProps<'a> {
-    children: Element<'a>,
+pub struct FormControlProps {
+    children: Element,
 }
 
 #[component]
-pub fn FormControl<'a>(props: FormControlProps<'a>) -> Element {
+pub fn FormControl(props: FormControlProps) -> Element {
     rsx! {
         div {
             class: "form-control",
@@ -84,12 +86,12 @@ pub fn FormControl<'a>(props: FormControlProps<'a>) -> Element {
 }
 
 #[derive(Props, PartialEq)]
-pub struct FormDescriptionProps<'a> {
-    children: Element<'a>,
+pub struct FormDescriptionProps {
+    children: Element,
 }
 
 #[component]
-pub fn FormDescription<'a>(props: FormDescriptionProps<'a>) -> Element {
+pub fn FormDescription(props: FormDescriptionProps) -> Element {
     rsx! {
         p {
             class: "text-sm text-muted-foreground",
@@ -99,12 +101,12 @@ pub fn FormDescription<'a>(props: FormDescriptionProps<'a>) -> Element {
 }
 
 #[derive(Props, PartialEq)]
-pub struct FormMessageProps<'a> {
-    children: Element<'a>,
+pub struct FormMessageProps {
+    children: Element,
 }
 
 #[component]
-pub fn FormMessage<'a>(props: FormMessageProps<'a>) -> Element {
+pub fn FormMessage(props: FormMessageProps) -> Element {
     let form_state = use_context::<Arc<FormState>>().unwrap_or_else(|| {
         Arc::new(FormState {
             errors: HashMap::new(),
