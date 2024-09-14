@@ -1,7 +1,7 @@
 use crate::components::{
     AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
     AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogTitle, AlertDialogTrigger,
-    Button, ButtonSize, ButtonVariant, Input, Textarea,
+    Button, ButtonSize, ButtonVariant, Form, FormControl, FormItem, FormLabel, Input, Textarea,
 };
 use dioxus::prelude::*;
 
@@ -14,31 +14,51 @@ pub fn HomePage() -> Element {
         div {
             class: "flex items-center justify-center h-screen bg-black text-white text-4xl flex-col",
             "Hello World",
-            Button {
-                text: "Click Me",
-                variant: Some(ButtonVariant::Default),
-                size: Some(ButtonSize::Default),
-                on_click: move |_| {
+            Form {
+                on_submit: move |_| {
                     show_alert.set(true);
-                    println!("Button clicked!");
                 },
-                class: "border border-white"
-            },
-            Input {
-                class: Some(String::from("my-custom-class text-black")),
-                value: Some(input_value.read().clone()),
-                placeholder: Some(String::from("Enter title here...")),
-                on_input: move |event: FormEvent| {
-                    input_value.set(event.value().clone());
-                }
-            },
-            Textarea {
-                class: Some(String::from("my-custom-class text-black mt-4")),
-                value: Some(textarea_value.read().clone()),
-                placeholder: Some(String::from("Enter text here...")),
-                on_input: move |event: FormEvent| {
-                    textarea_value.set(event.value().clone());
-                }
+                FormItem {
+                    FormLabel {
+                        "Title"
+                    }
+                    FormControl {
+                        Input {
+                            class: Some(String::from("my-custom-class text-black")),
+                            value: Some(input_value.read().clone()),
+                            placeholder: Some(String::from("Enter title here...")),
+                            on_input: move |event: FormEvent| {
+                                input_value.set(event.value().clone());
+                            }
+                        }
+                    }
+                },
+                FormItem {
+                    FormLabel {
+                        "Description"
+                    }
+                    FormControl {
+                        Textarea {
+                            class: Some(String::from("my-custom-class text-black mt-4")),
+                            value: Some(textarea_value.read().clone()),
+                            placeholder: Some(String::from("Enter text here...")),
+                            on_input: move |event: FormEvent| {
+                                textarea_value.set(event.value().clone());
+                            }
+                        }
+                    }
+                },
+                Button {
+                    text: "Submit",
+                    variant: Some(ButtonVariant::Default),
+                    size: Some(ButtonSize::Default),
+                    on_click: move |_| {
+                        // This will trigger the form submission event
+                        show_alert.set(true);
+                        println!("Form submitted!");
+                    },
+                    class: "border border-white mt-4"
+                },
             },
             {
                 if *show_alert.read() {
