@@ -17,4 +17,6 @@ dx serve --platform fullstack
 
 Textarea is done, but there are look and feel issues on the home page.
 
-Ok, I think the `input` control should be next. I have already created the component file for the input component. The file is empty now.
+Input is done.
+
+Form is in progress. I have compiler issues to resolve in the home page implementation.
