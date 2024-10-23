@@ -1,33 +1,36 @@
+use dioxus::events::MouseEvent;
 use dioxus::prelude::*;
-use std::collections::HashMap;
-use std::sync::Arc;
-
-#[derive(Clone, PartialEq)]
-pub struct FormState {
-    pub errors: HashMap<String, String>,
-}
 
 #[derive(Props, Clone, PartialEq)]
-pub struct FormProps {
+pub struct AlertDialogProps {
     children: Element,
-    #[props(optional)]
-    on_submit: Option<EventHandler<FormEvent>>,
 }
 
 #[component]
-pub fn Form(props: FormProps) -> Element {
-    let form_state = use_context::<Arc<FormState>>().unwrap_or_else(|| {
-        Arc::new(FormState {
-            errors: HashMap::new(),
-        })
-    });
-
+pub fn AlertDialog(props: AlertDialogProps) -> Element {
     rsx! {
-        form {
-            onsubmit: move |e| {
-                e.prevent_default();
-                if let Some(on_submit) = &props.on_submit {
-                    on_submit.call(e);
+        div {
+            class: "alert-dialog",
+            {props.children}
+        }
+    }
+}
+
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogTriggerProps {
+    children: Element,
+    #[props(optional)]
+    on_click: Option<EventHandler<MouseEvent>>,
+}
+
+#[component]
+pub fn AlertDialogTrigger(props: AlertDialogTriggerProps) -> Element {
+    rsx! {
+        button {
+            class: "alert-dialog-trigger",
+            onclick: move |e| {
+                if let Some(on_click) = &props.on_click {
+                    on_click.call(e);
                 }
             },
             {props.children}
@@ -36,60 +39,87 @@ pub fn Form(props: FormProps) -> Element {
 }
 
 #[derive(Props, Clone, PartialEq)]
-pub struct FormItemProps {
+pub struct AlertDialogOverlayProps {
     children: Element,
 }
 
 #[component]
-pub fn FormItem(props: FormItemProps) -> Element {
+pub fn AlertDialogOverlay(props: AlertDialogOverlayProps) -> Element {
     rsx! {
         div {
-            class: "space-y-2",
+            class: "fixed inset-0 z-50 bg-black/80",
             {props.children}
         }
     }
 }
 
 #[derive(Props, Clone, PartialEq)]
-pub struct FormLabelProps {
-    children: Element,
-    #[props(optional)]
-    html_for: Option<String>,
-}
-
-#[component]
-pub fn FormLabel(props: FormLabelProps) -> Element {
-    rsx! {
-        label {
-            class: "text-black",
-            html_for: "{props.html_for.unwrap_or_default()}",
-            {props.children}
-        }
-    }
-}
-
-#[derive(Props, Clone, PartialEq)]
-pub struct FormControlProps {
+pub struct AlertDialogContentProps {
     children: Element,
 }
 
 #[component]
-pub fn FormControl(props: FormControlProps) -> Element {
+pub fn AlertDialogContent(props: AlertDialogContentProps) -> Element {
     rsx! {
         div {
-            class: "form-control",
+            class: "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg",
             {props.children}
         }
     }
 }
 
 #[derive(Props, Clone, PartialEq)]
-pub struct FormDescriptionProps {
+pub struct AlertDialogHeaderProps {
     children: Element,
 }
 
 #[component]
-pub fn FormDescription(props: FormDescriptionProps) -> Element {
+pub fn AlertDialogHeader(props: AlertDialogHeaderProps) -> Element {
+    rsx! {
+        div {
+            class: "flex flex-col space-y-2 text-center sm:text-left",
+            {props.children}
+        }
+    }
+}
+
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogFooterProps {
+    children: Element,
+}
+
+#[component]
+pub fn AlertDialogFooter(props: AlertDialogFooterProps) -> Element {
+    rsx! {
+        div {
+            class: "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+            {props.children}
+        }
+    }
+}
+
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogTitleProps {
+    children: Element,
+}
+
+#[component]
+pub fn AlertDialogTitle(props: AlertDialogTitleProps) -> Element {
+    rsx! {
+        h2 {
+            class: "text-lg font-semibold",
+            {props.children}
+        }
+    }
+}
+
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogDescriptionProps {
+    children: Element,
+}
+
+#[component]
+pub fn AlertDialogDescription(props: AlertDialogDescriptionProps) -> Element {
     rsx! {
         p {
             class: "text-sm text-muted-foreground",
@@ -99,31 +129,45 @@ pub fn FormDescription(props: FormDescriptionProps) -> Element {
 }
 
 #[derive(Props, Clone, PartialEq)]
-pub struct FormMessageProps {
+pub struct AlertDialogActionProps {
     children: Element,
+    #[props(optional)]
+    on_click: Option<EventHandler<MouseEvent>>,
 }
 
 #[component]
-pub fn FormMessage(props: FormMessageProps) -> Element {
-    let form_state = use_context::<Arc<FormState>>().unwrap_or_else(|| {
-        Arc::new(FormState {
-            errors: HashMap::new(),
-        })
-    });
-
-    let error_message = form_state
-        .errors
-        .get(&props.children.text())
-        .unwrap_or(&String::new());
-
-    if error_message.is_empty() {
-        return rsx! { "" };
-    }
-
+pub fn AlertDialogAction(props: AlertDialogActionProps) -> Element {
     rsx! {
-        p {
-            class: "text-sm font-medium text-destructive",
-            "{error_message}"
+        button {
+            class: "alert-dialog-action bg-blue-500 text-white px-4 py-2 rounded",
+            onclick: move |e| {
+                if let Some(on_click) = &props.on_click {
+                    on_click.call(e);
+                }
+            },
+            {props.children}
+        }
+    }
+}
+
+#[derive(Props, Clone, PartialEq)]
+pub struct AlertDialogCancelProps {
+    children: Element,
+    #[props(optional)]
+    on_click: Option<EventHandler<MouseEvent>>,
+}
+
+#[component]
+pub fn AlertDialogCancel(props: AlertDialogCancelProps) -> Element {
+    rsx! {
+        button {
+            class: "alert-dialog-cancel bg-gray-300 text-black px-4 py-2 rounded mt-2 sm:mt-0",
+            onclick: move |e| {
+                if let Some(on_click) = &props.on_click {
+                    on_click.call(e);
+                }
+            },
+            {props.children}
         }
     }
 }
