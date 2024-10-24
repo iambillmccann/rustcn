@@ -1,130 +1,213 @@
 use dioxus::prelude::*;
 use std::collections::HashMap;
-use std::sync::Arc;
 
-// Define FormState to manage form state and errors
-#[derive(Clone, PartialEq)]
+// Utility function similar to cn() from shadcn
+fn cx(classes: &[&str]) -> String {
+    classes
+        .iter()
+        .filter(|c| !c.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+// Form context types
+#[derive(Clone, Debug, PartialEq)]
+pub struct FormFieldContext {
+    name: String,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct FormItemContext {
+    id: String,
+}
+
+#[derive(Clone, Debug, PartialEq)]
 pub struct FormState {
     pub errors: HashMap<String, String>,
 }
 
-#[derive(Clone, Props, PartialEq)]
+// Form Provider Component
+#[derive(Props)]
 pub struct FormProps {
     children: Element,
-    #[props(optional)]
-    on_submit: Option<EventHandler<FormEvent>>,
 }
 
 #[component]
-pub fn Form(props: FormProps) -> Element {
-    let form_state = use_context::<Arc<FormState>>().unwrap_or_else(|| {
-        Arc::new(FormState {
-            errors: HashMap::new(),
-        })
+pub fn Form(cx: Scope, props: FormProps) -> Element {
+    let form_state = use_shared_state_provider(cx, || FormState {
+        errors: HashMap::new(),
     });
 
-    rsx! {
+    render! {
         form {
-            onsubmit: move |e| {
-                e.prevent_default();
-                if let Some(on_submit) = &props.on_submit {
-                    on_submit.call(e);
-                }
+            onsubmit: move |event| {
+                event.prevent_default();
             },
             {props.children}
         }
     }
 }
 
-#[derive(Clone, Props, PartialEq)]
-pub struct FormItemProps {
+// Form Field Component
+#[derive(Props)]
+pub struct FormFieldProps {
+    name: String,
     children: Element,
 }
 
 #[component]
-pub fn FormItem(props: FormItemProps) -> Element {
-    rsx! {
+pub fn FormField(cx: Scope, props: FormFieldProps) -> Element {
+    let context = FormFieldContext {
+        name: props.name.clone(),
+    };
+    use_shared_state_provider(cx, || context);
+
+    render! {
         div {
-            class: "space-y-2",
             {props.children}
         }
     }
 }
 
-#[derive(Clone, Props, PartialEq)]
-pub struct FormLabelProps {
+// Form Item Component
+#[derive(Props)]
+pub struct FormItemProps {
+    #[props(default = "")]
+    class: String,
     children: Element,
-    #[props(optional)]
-    html_for: Option<String>,
 }
 
 #[component]
-pub fn FormLabel(props: FormLabelProps) -> Element {
-    rsx! {
-        label {
-            class: "text-black",
-            html_for: "{props.html_for.unwrap_or_default()}",
+pub fn FormItem(cx: Scope, props: FormItemProps) -> Element {
+    let id = use_state(cx, || uuid::Uuid::new_v4().to_string());
+    let context = FormItemContext {
+        id: id.get().clone(),
+    };
+    use_shared_state_provider(cx, || context);
+
+    render! {
+        div {
+            class: cx(&["space-y-2", &props.class]),
             {props.children}
         }
     }
 }
 
-#[derive(Clone, Props, PartialEq)]
+// Form Label Component
+#[derive(Props)]
+pub struct FormLabelProps {
+    #[props(default = "")]
+    class: String,
+    children: Element,
+}
+
+#[component]
+pub fn FormLabel(cx: Scope, props: FormLabelProps) -> Element {
+    let form_field = use_shared_state::<FormFieldContext>(cx).unwrap();
+    let form_state = use_shared_state::<FormState>(cx).unwrap();
+
+    let has_error = form_state
+        .read()
+        .errors
+        .contains_key(&form_field.read().name);
+    let error_class = if has_error { "text-destructive" } else { "" };
+
+    render! {
+        label {
+            class: cx(&[error_class, &props.class]),
+            {props.children}
+        }
+    }
+}
+
+// Form Control Component
+#[derive(Props)]
 pub struct FormControlProps {
     children: Element,
 }
 
 #[component]
-pub fn FormControl(props: FormControlProps) -> Element {
-    rsx! {
+pub fn FormControl(cx: Scope, props: FormControlProps) -> Element {
+    let form_field = use_shared_state::<FormFieldContext>(cx).unwrap();
+    let form_item = use_shared_state::<FormItemContext>(cx).unwrap();
+    let form_state = use_shared_state::<FormState>(cx).unwrap();
+
+    let has_error = form_state
+        .read()
+        .errors
+        .contains_key(&form_field.read().name);
+    let description_id = format!("{}-description", form_item.read().id);
+    let message_id = format!("{}-message", form_item.read().id);
+
+    let aria_describedby = if has_error {
+        format!("{} {}", description_id, message_id)
+    } else {
+        description_id.clone()
+    };
+
+    render! {
         div {
-            class: "form-control",
+            id: form_item.read().id.clone(),
+            aria_describedby: aria_describedby,
+            aria_invalid: has_error.to_string(),
             {props.children}
         }
     }
 }
 
-#[derive(Clone, Props, PartialEq)]
+// Form Description Component
+#[derive(Props)]
 pub struct FormDescriptionProps {
+    #[props(default = "")]
+    class: String,
     children: Element,
 }
 
 #[component]
-pub fn FormDescription(props: FormDescriptionProps) -> Element {
-    rsx! {
+pub fn FormDescription(cx: Scope, props: FormDescriptionProps) -> Element {
+    let form_item = use_shared_state::<FormItemContext>(cx).unwrap();
+    let description_id = format!("{}-description", form_item.read().id);
+
+    render! {
         p {
-            class: "text-sm text-muted-foreground",
+            id: description_id,
+            class: cx(&["text-sm text-muted-foreground", &props.class]),
             {props.children}
         }
     }
 }
 
-#[derive(Clone, Props, PartialEq)]
+// Form Message Component
+#[derive(Props)]
 pub struct FormMessageProps {
+    #[props(default = "")]
+    class: String,
     children: Element,
 }
 
 #[component]
-pub fn FormMessage(props: FormMessageProps) -> Element {
-    let form_state = use_context::<Arc<FormState>>().unwrap_or_else(|| {
-        Arc::new(FormState {
-            errors: HashMap::new(),
-        })
-    });
+pub fn FormMessage(cx: Scope, props: FormMessageProps) -> Element {
+    let form_field = use_shared_state::<FormFieldContext>(cx).unwrap();
+    let form_item = use_shared_state::<FormItemContext>(cx).unwrap();
+    let form_state = use_shared_state::<FormState>(cx).unwrap();
 
     let error_message = form_state
+        .read()
         .errors
-        .get(&props.children.text())
-        .unwrap_or(&String::new());
+        .get(&form_field.read().name)
+        .cloned();
+    let message_id = format!("{}-message", form_item.read().id);
 
-    if error_message.is_empty() {
-        return rsx! { "" };
+    // Return null if no error and no children
+    if error_message.is_none() && props.children.is_none() {
+        return None;
     }
 
-    rsx! {
+    render! {
         p {
-            class: "text-sm font-medium text-destructive",
-            "{error_message}"
+            id: message_id,
+            class: cx(&["text-sm font-medium text-destructive", &props.class]),
+            {error_message.unwrap_or_else(|| props.children.unwrap_or_default())}
         }
     }
 }

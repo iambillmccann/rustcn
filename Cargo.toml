@@ -13,6 +13,7 @@ manganis = "0.2.2"
 dioxus = { version = "0.5", features = ["web", "router"] }
 dioxus-web = "0.5"
 web-sys = "0.3.55"
+uuid = { version = "1.0", features = ["v4"] }
 
 # Debug
 tracing = "0.1.40"
