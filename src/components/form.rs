@@ -1,213 +1,167 @@
 use dioxus::prelude::*;
 use std::collections::HashMap;
 
-// Utility function similar to cn() from shadcn
-fn cx(classes: &[&str]) -> String {
-    classes
-        .iter()
-        .filter(|c| !c.is_empty())
-        .collect::<Vec<_>>()
-        .join(" ")
-}
-
-// Form context types
-#[derive(Clone, Debug, PartialEq)]
-pub struct FormFieldContext {
-    name: String,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct FormItemContext {
-    id: String,
-}
-
-#[derive(Clone, Debug, PartialEq)]
+// Form context to manage form state
+#[derive(Clone, Debug)]
 pub struct FormState {
-    pub errors: HashMap<String, String>,
+    values: HashMap<String, String>,
+    errors: HashMap<String, String>,
+    touched: HashMap<String, bool>,
 }
 
-// Form Provider Component
+impl FormState {
+    pub fn new() -> Self {
+        Self {
+            values: HashMap::new(),
+            errors: HashMap::new(),
+            touched: HashMap::new(),
+        }
+    }
+}
+
+// Form provider component
 #[derive(Props)]
-pub struct FormProps {
-    children: Element,
+pub struct FormProps<'a> {
+    #[props(optional)]
+    class: Option<&'a str>,
+    children: Element<'a>,
+    on_submit: EventHandler<'a, FormState>,
 }
 
-#[component]
-pub fn Form(cx: Scope, props: FormProps) -> Element {
-    let form_state = use_shared_state_provider(cx, || FormState {
-        errors: HashMap::new(),
-    });
+pub fn Form<'a>(cx: Scope<'a, FormProps<'a>>) -> Element {
+    let form_state = use_ref(cx, FormState::new);
 
-    render! {
+    cx.render(rsx! {
         form {
+            class: cx.props.class,
             onsubmit: move |event| {
                 event.prevent_default();
+                cx.props.on_submit.call((*form_state.read()).clone());
             },
-            {props.children}
+            &cx.props.children
         }
-    }
+    })
 }
 
-// Form Field Component
+// Form field component
 #[derive(Props)]
-pub struct FormFieldProps {
-    name: String,
-    children: Element,
+pub struct FormFieldProps<'a> {
+    #[props(optional)]
+    class: Option<&'a str>,
+    name: &'a str,
+    children: Element<'a>,
 }
 
-#[component]
-pub fn FormField(cx: Scope, props: FormFieldProps) -> Element {
-    let context = FormFieldContext {
-        name: props.name.clone(),
-    };
-    use_shared_state_provider(cx, || context);
-
-    render! {
+pub fn FormField<'a>(cx: Scope<'a, FormFieldProps<'a>>) -> Element {
+    cx.render(rsx! {
         div {
-            {props.children}
+            class: cx.props.class,
+            "data-field": cx.props.name,
+            &cx.props.children
         }
-    }
+    })
 }
 
-// Form Item Component
+// Form label component
 #[derive(Props)]
-pub struct FormItemProps {
-    #[props(default = "")]
-    class: String,
-    children: Element,
+pub struct FormLabelProps<'a> {
+    #[props(optional)]
+    class: Option<&'a str>,
+    #[props(optional)]
+    for_input: Option<&'a str>,
+    children: Element<'a>,
 }
 
-#[component]
-pub fn FormItem(cx: Scope, props: FormItemProps) -> Element {
-    let id = use_state(cx, || uuid::Uuid::new_v4().to_string());
-    let context = FormItemContext {
-        id: id.get().clone(),
-    };
-    use_shared_state_provider(cx, || context);
-
-    render! {
-        div {
-            class: cx(&["space-y-2", &props.class]),
-            {props.children}
-        }
-    }
-}
-
-// Form Label Component
-#[derive(Props)]
-pub struct FormLabelProps {
-    #[props(default = "")]
-    class: String,
-    children: Element,
-}
-
-#[component]
-pub fn FormLabel(cx: Scope, props: FormLabelProps) -> Element {
-    let form_field = use_shared_state::<FormFieldContext>(cx).unwrap();
-    let form_state = use_shared_state::<FormState>(cx).unwrap();
-
-    let has_error = form_state
-        .read()
-        .errors
-        .contains_key(&form_field.read().name);
-    let error_class = if has_error { "text-destructive" } else { "" };
-
-    render! {
+pub fn FormLabel<'a>(cx: Scope<'a, FormLabelProps<'a>>) -> Element {
+    cx.render(rsx! {
         label {
-            class: cx(&[error_class, &props.class]),
-            {props.children}
+            class: {
+                let mut classes = vec![];
+                if let Some(class) = cx.props.class {
+                    classes.push(class);
+                }
+                classes.join(" ")
+            },
+            r#for: cx.props.for_input,
+            &cx.props.children
         }
-    }
+    })
 }
 
-// Form Control Component
+// Form control component
 #[derive(Props)]
-pub struct FormControlProps {
-    children: Element,
+pub struct FormControlProps<'a> {
+    #[props(optional)]
+    class: Option<&'a str>,
+    children: Element<'a>,
 }
 
-#[component]
-pub fn FormControl(cx: Scope, props: FormControlProps) -> Element {
-    let form_field = use_shared_state::<FormFieldContext>(cx).unwrap();
-    let form_item = use_shared_state::<FormItemContext>(cx).unwrap();
-    let form_state = use_shared_state::<FormState>(cx).unwrap();
-
-    let has_error = form_state
-        .read()
-        .errors
-        .contains_key(&form_field.read().name);
-    let description_id = format!("{}-description", form_item.read().id);
-    let message_id = format!("{}-message", form_item.read().id);
-
-    let aria_describedby = if has_error {
-        format!("{} {}", description_id, message_id)
-    } else {
-        description_id.clone()
-    };
-
-    render! {
+pub fn FormControl<'a>(cx: Scope<'a, FormControlProps<'a>>) -> Element {
+    cx.render(rsx! {
         div {
-            id: form_item.read().id.clone(),
-            aria_describedby: aria_describedby,
-            aria_invalid: has_error.to_string(),
-            {props.children}
+            class: {
+                let mut classes = vec!["form-control"];
+                if let Some(class) = cx.props.class {
+                    classes.push(class);
+                }
+                classes.join(" ")
+            },
+            &cx.props.children
         }
-    }
+    })
 }
 
-// Form Description Component
+// Form description component
 #[derive(Props)]
-pub struct FormDescriptionProps {
-    #[props(default = "")]
-    class: String,
-    children: Element,
+pub struct FormDescriptionProps<'a> {
+    #[props(optional)]
+    class: Option<&'a str>,
+    children: Element<'a>,
 }
 
-#[component]
-pub fn FormDescription(cx: Scope, props: FormDescriptionProps) -> Element {
-    let form_item = use_shared_state::<FormItemContext>(cx).unwrap();
-    let description_id = format!("{}-description", form_item.read().id);
-
-    render! {
+pub fn FormDescription<'a>(cx: Scope<'a, FormDescriptionProps<'a>>) -> Element {
+    cx.render(rsx! {
         p {
-            id: description_id,
-            class: cx(&["text-sm text-muted-foreground", &props.class]),
-            {props.children}
+            class: {
+                let mut classes = vec!["text-sm", "text-muted-foreground"];
+                if let Some(class) = cx.props.class {
+                    classes.push(class);
+                }
+                classes.join(" ")
+            },
+            &cx.props.children
         }
-    }
+    })
 }
 
-// Form Message Component
+// Form error message component
 #[derive(Props)]
-pub struct FormMessageProps {
-    #[props(default = "")]
-    class: String,
-    children: Element,
+pub struct FormMessageProps<'a> {
+    #[props(optional)]
+    class: Option<&'a str>,
+    #[props(optional)]
+    error: Option<&'a str>,
+    children: Element<'a>,
 }
 
-#[component]
-pub fn FormMessage(cx: Scope, props: FormMessageProps) -> Element {
-    let form_field = use_shared_state::<FormFieldContext>(cx).unwrap();
-    let form_item = use_shared_state::<FormItemContext>(cx).unwrap();
-    let form_state = use_shared_state::<FormState>(cx).unwrap();
+pub fn FormMessage<'a>(cx: Scope<'a, FormMessageProps<'a>>) -> Element {
+    let error_message = cx.props.error.map(|err| err.to_string());
 
-    let error_message = form_state
-        .read()
-        .errors
-        .get(&form_field.read().name)
-        .cloned();
-    let message_id = format!("{}-message", form_item.read().id);
-
-    // Return null if no error and no children
-    if error_message.is_none() && props.children.is_none() {
+    if error_message.is_none() && cx.props.children.is_none() {
         return None;
     }
 
-    render! {
+    cx.render(rsx! {
         p {
-            id: message_id,
-            class: cx(&["text-sm font-medium text-destructive", &props.class]),
-            {error_message.unwrap_or_else(|| props.children.unwrap_or_default())}
+            class: {
+                let mut classes = vec!["text-sm", "font-medium", "text-destructive"];
+                if let Some(class) = cx.props.class {
+                    classes.push(class);
+                }
+                classes.join(" ")
+            },
+            error_message.unwrap_or_else(|| String::new()),
+            &cx.props.children
         }
-    }
+    })
 }
