@@ -19,21 +19,21 @@ impl FormState {
     }
 }
 
-// Form provider component
 #[derive(Props)]
-pub struct FormProps<'a> {
+pub struct FormProps {
     #[props(optional)]
-    class: Option<&'a str>,
-    children: Element<'a>,
-    on_submit: EventHandler<'a, FormState>,
+    class: Option<String>,
+    children: Element,
+    on_submit: EventHandler<FormState>,
 }
 
-pub fn Form<'a>(cx: Scope<'a, FormProps<'a>>) -> Element {
+#[component]
+pub fn Form(cx: Scope<FormProps>) -> Element {
     let form_state = use_ref(cx, FormState::new);
 
     cx.render(rsx! {
         form {
-            class: cx.props.class,
+            class: cx.props.class.clone(),
             onsubmit: move |event| {
                 event.prevent_default();
                 cx.props.on_submit.call((*form_state.read()).clone());
@@ -43,66 +43,66 @@ pub fn Form<'a>(cx: Scope<'a, FormProps<'a>>) -> Element {
     })
 }
 
-// Form field component
 #[derive(Props)]
-pub struct FormFieldProps<'a> {
+pub struct FormFieldProps {
     #[props(optional)]
-    class: Option<&'a str>,
-    name: &'a str,
-    children: Element<'a>,
+    class: Option<String>,
+    name: String,
+    children: Element,
 }
 
-pub fn FormField<'a>(cx: Scope<'a, FormFieldProps<'a>>) -> Element {
+#[component]
+pub fn FormField(cx: Scope<FormFieldProps>) -> Element {
     cx.render(rsx! {
         div {
-            class: cx.props.class,
-            "data-field": cx.props.name,
+            class: cx.props.class.clone(),
+            "data-field": cx.props.name.clone(),
             &cx.props.children
         }
     })
 }
 
-// Form label component
 #[derive(Props)]
-pub struct FormLabelProps<'a> {
+pub struct FormLabelProps {
     #[props(optional)]
-    class: Option<&'a str>,
+    class: Option<String>,
     #[props(optional)]
-    for_input: Option<&'a str>,
-    children: Element<'a>,
+    for_input: Option<String>,
+    children: Element,
 }
 
-pub fn FormLabel<'a>(cx: Scope<'a, FormLabelProps<'a>>) -> Element {
+#[component]
+pub fn FormLabel(cx: Scope<FormLabelProps>) -> Element {
     cx.render(rsx! {
         label {
             class: {
                 let mut classes = vec![];
-                if let Some(class) = cx.props.class {
-                    classes.push(class);
+                if let Some(class) = &cx.props.class {
+                    classes.push(class.as_str());
                 }
                 classes.join(" ")
             },
-            r#for: cx.props.for_input,
+            r#for: cx.props.for_input.clone(),
             &cx.props.children
         }
     })
 }
 
-// Form control component
 #[derive(Props)]
-pub struct FormControlProps<'a> {
+pub struct FormControlProps {
     #[props(optional)]
-    class: Option<&'a str>,
-    children: Element<'a>,
+    class: Option<String>,
+    children: Element,
 }
 
-pub fn FormControl<'a>(cx: Scope<'a, FormControlProps<'a>>) -> Element {
+#[component]
+pub fn FormControl(cx: Scope<FormControlProps>) -> Element {
     cx.render(rsx! {
         div {
             class: {
                 let mut classes = vec!["form-control"];
-                if let Some(class) = cx.props.class {
-                    classes.push(class);
+                if let Some(class) = &cx.props.class {
+                    classes.push(class.as_str());
                 }
                 classes.join(" ")
             },
@@ -111,21 +111,21 @@ pub fn FormControl<'a>(cx: Scope<'a, FormControlProps<'a>>) -> Element {
     })
 }
 
-// Form description component
 #[derive(Props)]
-pub struct FormDescriptionProps<'a> {
+pub struct FormDescriptionProps {
     #[props(optional)]
-    class: Option<&'a str>,
-    children: Element<'a>,
+    class: Option<String>,
+    children: Element,
 }
 
-pub fn FormDescription<'a>(cx: Scope<'a, FormDescriptionProps<'a>>) -> Element {
+#[component]
+pub fn FormDescription(cx: Scope<FormDescriptionProps>) -> Element {
     cx.render(rsx! {
         p {
             class: {
                 let mut classes = vec!["text-sm", "text-muted-foreground"];
-                if let Some(class) = cx.props.class {
-                    classes.push(class);
+                if let Some(class) = &cx.props.class {
+                    classes.push(class.as_str());
                 }
                 classes.join(" ")
             },
@@ -134,18 +134,18 @@ pub fn FormDescription<'a>(cx: Scope<'a, FormDescriptionProps<'a>>) -> Element {
     })
 }
 
-// Form error message component
 #[derive(Props)]
-pub struct FormMessageProps<'a> {
+pub struct FormMessageProps {
     #[props(optional)]
-    class: Option<&'a str>,
+    class: Option<String>,
     #[props(optional)]
-    error: Option<&'a str>,
-    children: Element<'a>,
+    error: Option<String>,
+    children: Element,
 }
 
-pub fn FormMessage<'a>(cx: Scope<'a, FormMessageProps<'a>>) -> Element {
-    let error_message = cx.props.error.map(|err| err.to_string());
+#[component]
+pub fn FormMessage(cx: Scope<FormMessageProps>) -> Element {
+    let error_message = cx.props.error.clone();
 
     if error_message.is_none() && cx.props.children.is_none() {
         return None;
@@ -155,12 +155,12 @@ pub fn FormMessage<'a>(cx: Scope<'a, FormMessageProps<'a>>) -> Element {
         p {
             class: {
                 let mut classes = vec!["text-sm", "font-medium", "text-destructive"];
-                if let Some(class) = cx.props.class {
-                    classes.push(class);
+                if let Some(class) = &cx.props.class {
+                    classes.push(class.as_str());
                 }
                 classes.join(" ")
             },
-            error_message.unwrap_or_else(|| String::new()),
+            {error_message.unwrap_or_default()},
             &cx.props.children
         }
     })
